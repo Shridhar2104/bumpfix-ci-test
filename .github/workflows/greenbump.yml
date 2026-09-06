@@ -1,0 +1,22 @@
+name: greenbump
+on:
+  pull_request:
+    paths: ["requirements*.txt"]
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  fix:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+      - uses: Shridhar2104/greenbump@v1
+        env:
+          # Subscription CI token from `claude setup-token` (own-repo use).
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
